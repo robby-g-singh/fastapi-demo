@@ -1,16 +1,42 @@
-# This is a sample Python script.
+# CRUD
+# Create; Read; Update; Delete items
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+# HTTP Requests - each correspond to a CRUD operation
+# GET; POST; PUT; DELETE information
+
+# Create -> POST
+# Read -> GET
+# Update -> PUT
+# Delete -> DELETE
+
+from fastapi import FastAPI  # import the class FastAPI
+from fastapi import HTTPException, status, Path
+from typing import Optional
+from pydantic import BaseModel
+
+app = FastAPI()  # create instance of FastAPI; this instance builds out the API
+# dummy database:
+users = {
+    1: {
+        "name": "Robby",
+        "website": "www.github.com/robby-g-singh",
+        "age": 27,
+        "role": "developer"
+    }
+}
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+# Endpoint creation:
+@app.get("/")  # create the landing page
+def root():
+    return {"message": "Welcome to your Introduction to FastAPI!"}
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# root.com/users/1
+# Get Users Endpoint
+@app.get("/users/{user_id}")
+def get_user(user_id: int = Path(..., description="The ID you want to get", gt=0, lt=100)):
+    # check if user is in the database
+    if user_id not in users:
+        raise HTTPException(status_code=404, detail="User Not Found!")
+    return users[user_id]
