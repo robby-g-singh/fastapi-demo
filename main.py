@@ -70,8 +70,25 @@ def create_user(user_id: int, user: User):  # function to create user; input par
     users[user_id] = user.dict()  # store user.dict() inside our users db with the key of user_id
     return user
 
-# update a user
 
+# update a user
+@app.put("/users/{user_id}")
+def update_user(user_id: int, user: UpdateUser):  # function to update an existing user in the database
+    if user_id not in users:
+        raise HTTPException(status_code=404, detail="User does not exist!")
+    # check which optional field is being updated
+    current_user = users[user_id]
+
+    if user.name is not None:
+        current_user["name"] = user.name
+    if user.website is not None:
+        current_user["website"] = user.website
+    if user.age is not None:
+        current_user["age"] = user.age
+    if user.role is not None:
+        current_user["role"] = user.role
+
+    return current_user
 # delete a user
 
 # search for a user
