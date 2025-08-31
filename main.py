@@ -89,6 +89,27 @@ def update_user(user_id: int, user: UpdateUser):  # function to update an existi
         current_user["role"] = user.role
 
     return current_user
+
+
 # delete a user
+@app.delete("/users/{user_id}")
+def delete_user(user_id: int):
+    if user_id not in users:
+        raise HTTPException(status_code=404, detail="User does not exist!")
+
+    deleted_user = users.pop(user_id)
+    return {"message": "User has been deleted", "deleted_user": deleted_user}
+
 
 # search for a user
+# url.com/users/search?robby
+@app.get("/users/search/")
+def search_by_name(name: Optional[str] = None):
+    if not name:
+        return {"message": "Name parameter is required!"}
+
+    for user in users.values():
+        if user["name"] == name:
+            return user
+
+    raise HTTPException(status_code=404, detail="User not found!")
